@@ -1,1 +1,2 @@
 #— A space-separated list of the external IP addresses of your two Cloud instances.
+http://34.135.117.78:8080/greeting 
