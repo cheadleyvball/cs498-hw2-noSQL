@@ -1,4 +1,7 @@
-#— A file containing:
-The average latency measurements from Part IV-A.
-The results from your eventual consistency experiment in Part IV-B (i.e., how many times the username was not found).
-A brief (1–2 paragraph) discussion of your findings. Why do you think the latencies differ? What does your consistency experiment show?
+
+us-central1 /register average latency: 125.127 ms
+europe-west1 /register average latency: 432.778 ms
+us-central1 /list average latency: 103.704 ms
+europe-west1 /list average latency: 374.056 ms
+ITERATIONS: 100
+not_found_inList_count: 0
