@@ -1,1 +1,57 @@
-# — A file describing your implementation of the scripts used to measure latency for section IV. The other code in the assignment is basically following the listed directions. If you attempted the assignment differently from these instructions, please describe briefly what you did in this section.
+import requests
+import time
+#two base URL's for the US and the EU instance - > hoepfuelly we see better latency with US
+central1_baseURL = "http://34.68.180.180:8080"
+europeWest1_baseURL = "http://34.79.164.175:8080"
+
+#latency measurements, will do it for 15 requests
+def latency_measurements(base_url, endpoint, method="GET", payload=None, n=15):
+    latencies = []
+    for i in range(n):
+        start = time.time()
+        if method == "POST":
+            unique_payload = {"username": f"{payload['username']}_{i}"}
+            requests.post(f"{base_url}{endpoint}", json=unique_payload)
+        else:
+            #for get we just need that endpoint
+            requests.get(f"{base_url}{endpoint}")
+        elapsed = (time.time() - start) * 1000
+        latencies.append(elapsed)
+    avg_latency = sum(latencies) / len(latencies)
+    return avg_latency
+print("PART A: Latency Measurements")
+# calculate register latency
+avg_register_us_latency = latency_measurements(
+    central1_baseURL,
+    "/register",
+    method="POST",
+    payload={"username": "latency_test_us"}
+)
+avg_register_eu_latency = latency_measurements(
+    europeWest1_baseURL,
+    "/register",
+    method="POST",
+    payload={"username": "latency_test_eu"}
+)
+print("us_register Latency:", round(avg_register_us_latency,3))
+print("eu register Latency:", round(avg_register_eu_latency,3))
+# calcualte list latency - > use the base url and just attach /list
+avg_us_list_latency = latency_measurements(central1_baseURL, "/list")
+avg_eu_list_latency  = latency_measurements(europeWest1_baseURL, "/list")
+print("us_list Latency:", round(avg_us_list_latency, 3))
+print("eu_list Latency:", round(avg_eu_list_latency,3))
+
+#Part B -> Looking at Eventual Consistency
+print("PART B: Looking at Eventual Consistency")
+ITERATIONS = 100
+not_found_inList_count = 0
+for i in range(ITERATIONS):
+    #generate unique username
+    username = f"user_{i}"
+    #send that POST request tot he registedr endpoint - > will use central 1
+    requests.post(f"{central1_baseURL}/register", json={"username": username})
+    users = requests.get(f"{europeWest1_baseURL}/list").json()["users"]
+    if username not in users:
+        not_found_inList_count += 1
+print("ITERATIONS:", ITERATIONS)
+print("not_found_inList_count", not_found_inList_count)
