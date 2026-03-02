@@ -1,2 +1,1 @@
-# A space-separated list of the external IP addresses of your two Cloud instances.
 34.68.180.180 34.79.164.175
